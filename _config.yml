@@ -105,5 +105,4 @@ theme: hexo-theme-polarbear
 deploy:
   type: git
   repo:
-    - https://github.com/alongithub/alongithub.github.io.git
-    - https://gitee.com/alongitee/alongitee.gitee.io.git
+    - http://8.131.89.234:9999/along/blogpage.git
