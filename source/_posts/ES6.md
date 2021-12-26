@@ -1,7 +1,7 @@
 ---
 layout: article
 title: ES6
-description: ES6 + 整理
+description: ECMAScript在每年的6月份都会正式发布一次标准，ES6 就是2015年发布的标准，不过通常会用ES6来泛指 ES2015 以及以后的版本，这篇文章整理了 ES6 的一些新的特性，以后有新的标准发布都会持续更新进去
 toc: true
 date: 2020-08-26 11:49:51
 tags: [notes, javascript, es6]
@@ -9,26 +9,54 @@ tags: [notes, javascript, es6]
 ---
 ## ES2015
 
-### let块级作用域
+### 块级作用域let、const
 
-### const
-只读的let，不可以修改内存地址
+使用let和const定义的值都会产生块级作用域，这两种方式声明的变量只能在所声明的代码块中被访问。
+const声明的变量是只读的，不可以修改内存地址
 
-### let,var,const 三者的区别
-var声明的变量不存在块级作用域，并且存在变量提升，在变量声明之前使用可以取到一个undefined的值。
-在最外层作用域生命的var变量会挂载到全局对象上
-let和const声明的变量存在块级作用域，不会挂在到全局对象上。在声明之前使用会报错。let变量值可以随意赋值，const的值不允许改变，因此const在定义时必须初始化
+#### 块级作用域的应用场景
+
+循环计数
+```js
+// 块级作用域应用于双重循环的计数器
+for(let i = 0; i < 3; i ++) {
+    for(let i = 0; i < 3; i ++) {
+        console.log(i)
+    }
+}
+// 0,1,2  0,1,2  0,1,2
+// 两层循环的i不会互相影响，实际开发中这样使用不便于理解维护
+```
+
+闭包应用场景
+```js
+// 循环绑定事件时，使用var定义计数器，最终点击事件打印的i都是最终i的值，因为i存在于全局环境被所有点击事件共用
+for (let i = 0; i< 3; i ++) {
+    element[i].onclick = function() {
+        alert(i);
+    }
+}
+```
+
+#### let,var,const 三者的区别
+1. var声明的变量不存在块级作用域，并且存在**变量提升**，在变量声明之前使用可以取到一个undefined的值。
+2. 与var不同，let在声明之前使用会报错，这一特性称为**暂时性死区**，这也导致typeof不是绝对安全的操作，这种特性是为了让开发者养成良好的编程习惯，变量一定要在声明之后使用，否则就报错。
+3. 在最外层作用域生命的var变量会挂载到全局对象上，let和const声明的变量存在块级作用域，不会挂在到全局对象上。
+4. let变量值可以随意赋值，const的值不允许改变，因此const在定义时必须初始化
+
+
 
 ``` javascript
 var a = 'vara';
 console.log('window.a: ', window.a); // vara
+// 在最外层声明的var变量会挂载到全局对象window上
 
 let b = 'letb';
 console.log('window.b: ', window.b); // undefined
 
 function bar() {
-    c = 'bar_c';
-    var d = 'bar_d';
+    c = 'bar_c'; // 没有声明的变量直接赋值，不管是在函数内部还是全局，都会挂载到window上
+    var d = 'bar_d'; // 函数内部var定义的变量，只在函数作用域中可以被访问
     function foo() {
         e = 'foo_e';
         var f = 'foo_f';
@@ -47,8 +75,25 @@ console.log('window.d: ', window.d); // undefined
 console.log('e: ', e); // foo_e
 ```
 
-### 数组的解构
+### 解构（Destructuring）
+按照一定模式，从数组和对象中提取值，对变量进行赋值
+#### 对象的解构
+对象解构语法是在赋值对象的左侧使用了对象字面量
+```js
+const obj = {name: 'along'}
+const {name} = obj; // 同名变量解构赋值
+const {name: newName} = obj; // 不同变量解构赋值
+// newName = along
 
+// 解构同时赋默认值
+const {age: newAge = 24} = obj;
+// newAge = 24;
+
+// 简化代码
+const {log} = console;
+```
+#### 数组的解构
+数组解构时，解构作用在数组内部的位置上
 ```js
 const arr = [1, 2, 3]
 const [a, b, c] = arr;
@@ -69,22 +114,9 @@ const [, month] = path.split('/');
 // month = 12
 ```
 
-### 对象的解构
-类似数组解构，除此之外，可以在解构时重命名
-```js
-const obj = {name: 'along'}
-const {name: newName} = obj;
-// newName = along
 
-// 解构同时赋默认值
-const {age: newAge = 24};
-// newAge = 24;
-
-// 简化代码
-const {log} = console;
-```
-### 模板字符串
-
+### 模板字符串 (Template literals)
+模板字面量是允许嵌入表达式的字符串字面量。可以使用多行字符串和字符串插值功能
 ```js
 const str = `
     可以支持换行
@@ -103,16 +135,17 @@ alert``hello ${'along'} age ${23}`
 
 ### 字符串拓展方法
 
+#### includes、startsWith、endsWith
 ```js
 const str = 'hello along'
 includes('alo') // true
 
-stratsWith('he') // true
+startsWith('he') // true
 
 endsWith('along') // true
 
 ```
-### 参数默认值
+### 参数默认值（Default parameters）
 ```js
 function add1(a = 2) {
    return a + 1 
@@ -139,7 +172,7 @@ console.log(...arr);
 // 1 2 3
 ```
 
-### 箭头函数
+### 箭头函数（Arrow functions）
 ```js
 // 简化代码
 const add1 = num => num + 1;
@@ -175,7 +208,7 @@ a(1,2)()
 // [Arguments] { '0': 1, '1': 2 }
 ```
 
-### 对象字面量 增强
+### 对象字面量增强（Enhanced object literals）
 ```js
 // 对象属性值简略写法
 const name = 'along';
@@ -424,7 +457,7 @@ Reflect.ownKeys(person);
 // ['name', 'age']  相当于  person.keys();
 ```
 
-### class 类
+### Classes 类
 
 ```js
 class Person {
