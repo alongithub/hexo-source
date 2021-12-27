@@ -92,3 +92,12 @@ ok!
 
 [nodejs安装](https://www.cnblogs.com/niuben/p/12938501.html)
 
+参照node 方式安装yarn 并设置全局依赖和缓存目录，并设置yarn 的软连接
+
+全局安装hexo
+
+```
+yarn global add hexo-cli
+```
+
+进入到全局yarn 地址 ，设置hexo 软链
