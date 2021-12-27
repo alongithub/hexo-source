@@ -88,16 +88,48 @@ service jenkins start/stop/restart
 ok!
 
 
-### 构建
+### 构建gitlab自动部署
 
 [nodejs安装](https://www.cnblogs.com/niuben/p/12938501.html)
 
 参照node 方式安装yarn 并设置全局依赖和缓存目录，并设置yarn 的软连接
 
-全局安装hexo
-
+安装git
 ```
-yarn global add hexo-cli
+yum install -y git
 ```
 
-进入到全局yarn 地址 ，设置hexo 软链
+安装gitlab 相关插件 `gitlab hook plugin` , `gitlab plugin`
+创建jenkins 任务
+
+选择构建一个自由风格的软件项目
+1. 源码培训hi git 地址和密钥
+2. 构建触发器 选择  Build when a change is pushed to GitLab...
+  - 勾选push event
+3. 构建 中比那些shell 脚本
+4. 保存
+
+jenkins
+系统配置 -> GitHub -> Github 服务器 -> 高级 -> 为 Github 指定另外一个 Hook URL -> 保存
+
+gitlab 配置 webhooks
+
+1. settings -> integrations 或者 settings -> webhooks
+2. 填写 jenkins 的hooks url
+3. 勾选 push events
+4. 添加
+5. 测试
+
+如果 gitlab hooks 测试出现 403 问题
+1. Configure Global Security -> 授权策略 -> Logged-in users can do anything （登录用户可以做任何事情） 点选 -> 匿名用户具有可读权限 点选
+2. 去掉跨站点请求伪造 点选 放开
+Manage Jenkins- >Configure Global Security -> CSRF Protection（跨站请求伪造保护）
+3. 去掉Gitlab enable authentication 点选 放开
+系统管理 -> 系统设置 -> Enable authentication for '/project' end-point
+参考[Hook executed successfully but returned HTTP 403](https://www.cnblogs.com/chenglc/p/11174530.html)
+
+### 彻底卸载Jenkins
+
+如果Jenkins 安装失败需要重新安装，参考[彻底卸载Jenkins](https://blog.csdn.net/weixin_37194108/article/details/106055992)
+
+
