@@ -1,0 +1,25 @@
+<div id="article-banner">
+  <h2>Series</h2>
+  <p class="post-date">Series by Categories</p>
+</div>
+
+
+<main class="app-body">
+
+</main>
+
+<script>
+  (function () {
+    var url = '<%= config.url %>/<%= page.path %>'
+    $('#article-banner').geopattern(url)
+    $('.header').removeClass('fixed-header')
+
+    var category = location.hash.replace('#', '')
+    if (category) {
+      var categoryId = "#category-" + category;
+      $("html, body").animate({
+        scrollTop: $(categoryId).offset().top
+      }, 400)
+    }
+  })();
+</script>
